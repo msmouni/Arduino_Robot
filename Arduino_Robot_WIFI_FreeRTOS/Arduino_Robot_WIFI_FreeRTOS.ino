@@ -56,8 +56,8 @@ void Move_F(){
     digitalWrite(Right_Motor_S1,HIGH);
     digitalWrite(Right_Motor_S2,LOW);
     
-    //delay (2000);
-    vTaskDelay( 2000 / portTICK_PERIOD_MS );
+    //delay (1000);
+    vTaskDelay( 1000 / portTICK_PERIOD_MS );
     
     //the action is executed during 2s, then the motors are stopped.
     digitalWrite(Left_Motor_S1,LOW);
@@ -76,8 +76,8 @@ void Move_B(){
     digitalWrite(Right_Motor_S1,LOW);
     digitalWrite(Right_Motor_S2,HIGH);
     
-    //delay (2000);
-    vTaskDelay( 2000 / portTICK_PERIOD_MS );
+    //delay (1000);
+    vTaskDelay( 1000 / portTICK_PERIOD_MS );
 
     //the action is executed during 2s, then the motors are stopped.
     digitalWrite(Left_Motor_S1,LOW);
@@ -97,8 +97,8 @@ void Move_L(){
     digitalWrite(Right_Motor_S1,HIGH);
     digitalWrite(Right_Motor_S2,LOW);
     
-    //delay (1000);
-    vTaskDelay( 1000 / portTICK_PERIOD_MS );
+    //delay (700);
+    vTaskDelay( 700 / portTICK_PERIOD_MS );
 
     //the action is executed during 1s, then the motors are stopped.
     digitalWrite(Left_Motor_S1,LOW);
@@ -119,8 +119,8 @@ void Move_R(){
     digitalWrite(Right_Motor_S1,LOW);
     digitalWrite(Right_Motor_S2,LOW);
     
-    //delay (1000);
-    vTaskDelay( 1000 / portTICK_PERIOD_MS );
+    //delay (700);
+    vTaskDelay( 700 / portTICK_PERIOD_MS );
     
     //the action is executed during 1s, then the motors are stopped.
     digitalWrite(Left_Motor_S1,LOW);
@@ -229,7 +229,7 @@ void setup()
   send_to_ESP8266("AT+CWMODE=2\r\n",1000,DEBUG); // configure as access point
   send_to_ESP8266("AT+CIFSR\r\n",1000,DEBUG); // get ip address
   send_to_ESP8266("AT+CIPMUX=1\r\n",1000,DEBUG); // configure for multiple connections
-  send_to_ESP8266("AT+CIPSERVER=1,77\r\n",1000,DEBUG); // turn on server on port 77
+  send_to_ESP8266("AT+CIPSERVER=1,80\r\n",1000,DEBUG); // turn on server on port 80
   
   delay(1000);
 
@@ -267,7 +267,7 @@ void Task_control( void *pvParameters ) {
   
       //Serial.find() reads data from the serial buffer until the target string of given length is found
       if(esp8266.find("+IPD,")){
-        vTaskDelay( 10 / portTICK_PERIOD_MS );//delay(10); // wait for the serial buffer to fill up (read all the serial data)
+        vTaskDelay( 100 / portTICK_PERIOD_MS );//delay(100); // wait for the serial buffer to fill up (read all the serial data)
   
         esp8266.find("cmd="); // advance cursor to "cmd="
         
@@ -277,18 +277,23 @@ void Task_control( void *pvParameters ) {
         //Depending on the command sent by the Android application, the corresponding action is executed
         switch(rcv_CMD){
           case 'F':
+            Serial.println('F');
             Move_F();
             break;
           case 'B':
+            Serial.println('B');
             Move_B();
             break;
           case 'L':
+            Serial.println('L');
             Move_L();
             break;
           case 'R':
+            Serial.println('R');
             Move_R();
             break;
           case 'S':
+            Serial.println('S');
             Stopp();
             break;
           default:
@@ -298,9 +303,6 @@ void Task_control( void *pvParameters ) {
       }
   
     }
-  
-    // Instead of delay(100);
-    vTaskDelay( 100/ portTICK_PERIOD_MS ); 
   
   }
 }
@@ -318,7 +320,7 @@ void Task_avoid( void *pvParameters ){
       avoid_rear();
     }
     else {
-      vTaskDelay( 300 / portTICK_PERIOD_MS );
+      vTaskDelay( 100 / portTICK_PERIOD_MS );
     }
   }
 }
